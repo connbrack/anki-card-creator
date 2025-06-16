@@ -13,11 +13,11 @@ class Anki:
     self._audio_files = []
 
   @staticmethod
-  def create_deck(deckname: str):
+  def create_deck(category: str, deckname: str):
     deck_id = random.randrange(1 << 30, 1 << 31)
     my_deck = genanki.Deck(
         deck_id,
-        f'{deckname}'
+        f'{category}::{deckname}'
     )
 
     model = genanki.Model(

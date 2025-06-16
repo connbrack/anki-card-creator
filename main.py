@@ -15,10 +15,12 @@ load_dotenv()
 def main():
 
   deckname = os.getenv('DECKNAME')
+  category = os.getenv('CATEGORY')
   audio_prefix = os.getenv('AUDIO_PREFIX')
 
   assert deckname is not None
   assert audio_prefix is not None
+  assert category is not None
 
   with open(f'decks/{deckname}.json', 'r') as f:
     deck = json.load(f)
@@ -26,7 +28,7 @@ def main():
   with tempfile.TemporaryDirectory() as temp_dir:
     dir_path = Path(temp_dir).resolve()
 
-    anki = Anki.create_deck(deckname)
+    anki = Anki.create_deck(category, deckname)
     polly = Polly.create_from_env(dir_path)
 
     for i, card in enumerate(tqdm(deck)):
