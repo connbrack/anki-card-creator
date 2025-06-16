@@ -1,0 +1,7 @@
+.env
+packaged
+decks
+
+__pycache__
+.venv
+.vim
