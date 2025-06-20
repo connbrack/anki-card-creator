@@ -9,14 +9,16 @@ from dotenv import load_dotenv
 
 from tools.polly import Polly
 from tools.anki import Anki
+from tools.cli import select_deck_cli
 
 load_dotenv()
 
 def main():
 
-  deckname = os.getenv('DECKNAME')
   category = os.getenv('CATEGORY')
   audio_prefix = os.getenv('AUDIO_PREFIX')
+
+  deckname = select_deck_cli()
 
   assert deckname is not None
   assert audio_prefix is not None
