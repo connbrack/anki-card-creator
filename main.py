@@ -1,6 +1,5 @@
 import os
 import json
-import shutil
 from pathlib import Path
 
 import tempfile
@@ -9,17 +8,19 @@ from dotenv import load_dotenv
 
 from tools.polly import Polly
 from tools.anki import Anki
+from tools.cli import select_deck_cli
 
 load_dotenv()
 
+
 def main():
 
-  deckname = os.getenv('DECKNAME')
   category = os.getenv('CATEGORY')
   audio_prefix = os.getenv('AUDIO_PREFIX')
 
-  assert deckname is not None
-  assert audio_prefix is not None
+  deckname = select_deck_cli()
+  if deckname is None:
+    return
 
   with open(f'decks/{deckname}.json', 'r') as f:
     deck = json.load(f)
@@ -39,6 +40,7 @@ def main():
       anki.add_note(english_text, french_text, dir_path / f'{audio_basename}.mp3')
 
     anki.package_notes(Path('packaged').resolve())
+
 
 if __name__ == "__main__":
   main()

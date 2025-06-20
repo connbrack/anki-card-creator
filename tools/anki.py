@@ -62,4 +62,5 @@ class Anki:
     self._audio_files.append(audio_filepath)
 
   def package_notes(self, output_path: Path):
+    output_path.mkdir(exist_ok=True)
     genanki.Package(self._deck, media_files=self._audio_files).write_to_file(f'{output_path}/{self._deckname}.apkg')
