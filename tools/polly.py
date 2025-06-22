@@ -9,9 +9,9 @@ load_dotenv()
 
 
 class Polly:
-  def __init__(self, client, dir_path:Path):
+  def __init__(self, client, audio_dir_path:Path):
     self.client = client
-    self.dir_path = dir_path
+    self.audio_dir_path = audio_dir_path
 
   @staticmethod
   def create_from_env(dir_path: Path):
@@ -25,8 +25,8 @@ class Polly:
 
   def create_audio(self, text: str, filename: str, tempo: float = 1):
 
-    filepath_fs = self.dir_path / f'{filename}_fs.mp3'
-    filepath = self.dir_path / f'{filename}.mp3'
+    filepath_fs = self.audio_dir_path / f'{filename}_fs.mp3'
+    filepath = self.audio_dir_path / f'{filename}.mp3'
 
     tts = self.client.synthesize_speech(
         Text=text,
