@@ -22,7 +22,7 @@ def main():
   if deckname is None:
     return
 
-  with open(f'decks/{deckname}.json', 'r') as f:
+  with open(f'decks/{deckname}.json', 'r', encoding="utf-8") as f:
     deck = json.load(f)
 
   with tempfile.TemporaryDirectory() as temp_dir:

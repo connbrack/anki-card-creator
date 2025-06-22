@@ -1,8 +1,8 @@
 import os
-import tempfile
-import boto3
 import subprocess
 from pathlib import Path
+
+import boto3
 from dotenv import load_dotenv
 
 load_dotenv()
