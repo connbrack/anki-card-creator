@@ -1,45 +1,47 @@
-import os
 import json
+import os
+import tempfile
 from pathlib import Path
 
-import tempfile
-from tqdm import tqdm
 from dotenv import load_dotenv
+from tqdm import tqdm
 
-from tools.polly import Polly
 from tools.anki import Anki
 from tools.cli import select_deck_cli
+from tools.polly import Polly
 
 load_dotenv()
 
 
 def main():
 
-  category = os.getenv('CATEGORY')
+    category = os.getenv('CATEGORY')
 
-  deckname = select_deck_cli()
-  if deckname is None:
-    return
+    deckname = select_deck_cli()
+    if deckname is None:
+        return
 
-  with open(f'decks/{deckname}.json', 'r', encoding="utf-8") as f:
-    deck = json.load(f)
+    with open(f'decks/{deckname}.json', 'r', encoding="utf-8") as f:
+        deck = json.load(f)
 
-  with tempfile.TemporaryDirectory() as temp_dir:
-    audio_dir_path = Path(temp_dir).resolve()
+    with tempfile.TemporaryDirectory() as temp_dir:
+        audio_dir_path = Path(temp_dir).resolve()
 
-    anki = Anki.create_deck(deckname, category=category)
-    polly = Polly.create_from_env(audio_dir_path)
+        anki = Anki.create_deck(deckname, category=category)
+        polly = Polly.create_from_env(audio_dir_path)
 
-    for i, card in enumerate(tqdm(deck)):
-      french_text = card['French']
-      english_text = card['English']
-      audio_basename = f'{deckname}-{i}'
-      polly.create_audio(french_text, audio_basename, tempo=0.8)
-      anki.add_note(french_text, english_text, audio_dir_path / f'{audio_basename}.mp3')
-      anki.add_note(english_text, french_text, audio_dir_path / f'{audio_basename}.mp3')
+        for i, card in enumerate(tqdm(deck)):
+            french_text = card['French']
+            english_text = card['English']
+            audio_basename = f'{deckname}-{i}'
+            polly.create_audio(french_text, audio_basename, tempo=0.8)
+            anki.add_note(french_text, english_text,
+                          audio_dir_path / f'{audio_basename}.mp3')
+            anki.add_note(english_text, french_text,
+                          audio_dir_path / f'{audio_basename}.mp3')
 
-    anki.package_notes(Path('packaged').resolve())
+        anki.package_notes(Path('packaged').resolve())
 
 
 if __name__ == "__main__":
-  main()
+    main()

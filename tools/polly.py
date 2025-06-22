@@ -9,35 +9,35 @@ load_dotenv()
 
 
 class Polly:
-  def __init__(self, client, audio_dir_path:Path):
-    self.client = client
-    self.audio_dir_path = audio_dir_path
+    def __init__(self, client, audio_dir_path: Path):
+        self.client = client
+        self.audio_dir_path = audio_dir_path
 
-  @staticmethod
-  def create_from_env(dir_path: Path):
-    client = boto3.Session(
-        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-        region_name=os.getenv('REGION')
-    ).client('polly')
+    @staticmethod
+    def create_from_env(dir_path: Path):
+        client = boto3.Session(
+            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+            region_name=os.getenv('REGION')
+        ).client('polly')
 
-    return Polly(client, dir_path)
+        return Polly(client, dir_path)
 
-  def create_audio(self, text: str, filename: str, tempo: float = 1):
+    def create_audio(self, text: str, filename: str, tempo: float = 1):
 
-    filepath_fs = self.audio_dir_path / f'{filename}_fs.mp3'
-    filepath = self.audio_dir_path / f'{filename}.mp3'
+        filepath_fs = self.audio_dir_path / f'{filename}_fs.mp3'
+        filepath = self.audio_dir_path / f'{filename}.mp3'
 
-    tts = self.client.synthesize_speech(
-        Text=text,
-        OutputFormat='mp3',
-        VoiceId='Celine'
-    )
-    with open(filepath_fs, 'wb') as f:
-      f.write(tts['AudioStream'].read())
+        tts = self.client.synthesize_speech(
+            Text=text,
+            OutputFormat='mp3',
+            VoiceId='Celine'
+        )
+        with open(filepath_fs, 'wb') as f:
+            f.write(tts['AudioStream'].read())
 
-    if tempo != 1:
-      subprocess.run([
-          'ffmpeg', '-y', '-i', filepath_fs,
-          '-filter:a', f'atempo={tempo}', '-vn', filepath
-      ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if tempo != 1:
+            subprocess.run([
+                'ffmpeg', '-y', '-i', filepath_fs,
+                '-filter:a', f'atempo={tempo}', '-vn', filepath
+            ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
