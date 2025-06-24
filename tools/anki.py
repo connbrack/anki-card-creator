@@ -6,14 +6,15 @@ import genanki
 
 class Anki:
 
-    def __init__(self, deckname: str, deck: genanki.Deck, model: genanki.Model):
+    def __init__(self, deckname: str, audio_dir: Path, deck: genanki.Deck, model: genanki.Model):
         self._deckname = deckname
+        self._audio_dir = audio_dir
         self._deck = deck
         self._model = model
         self._audio_files = []
 
     @staticmethod
-    def create_deck(deckname: str, category: str | None = None):
+    def create_deck(deckname: str, audio_dir: Path, category: str | None = None):
         if category:
             deck_loc = f'{category}::{deckname}'
         else:
@@ -49,13 +50,13 @@ class Anki:
                 }
                 """
         )
-        return Anki(deckname, my_deck, model)
+        return Anki(deckname, audio_dir, my_deck, model)
 
-    def add_note(self, front_text: str, back_text: str, audio_filepath: Path):
-
+    def add_note(self, front_text: str, back_text: str, audio_basename: str):
+        audio_filepath = self._audio_dir / f'{audio_basename}.mp3'
         my_note = genanki.Note(
             model=self._model,
-            fields=[front_text, back_text, f'[sound:{audio_filepath.name}]']
+            fields=[front_text, back_text, f'[sound:{audio_basename}]']
         )
 
         self._deck.add_note(my_note)
