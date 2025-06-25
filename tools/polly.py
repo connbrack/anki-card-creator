@@ -9,24 +9,23 @@ load_dotenv()
 
 
 class Polly:
-    def __init__(self, client, audio_dir_path: Path):
+    def __init__(self, client):
         self.client = client
-        self.audio_dir_path = audio_dir_path
 
     @staticmethod
-    def create_from_env(dir_path: Path):
+    def create_from_env():
         client = boto3.Session(
             aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
             region_name=os.getenv('REGION')
         ).client('polly')
 
-        return Polly(client, dir_path)
+        return Polly(client)
 
-    def create_audio(self, text: str, filename: str, tempo: float = 1):
+    def create_audio(self, text: str, audio_dir: Path, audio_basename: str, tempo: float = 1):
 
-        filepath_fs = self.audio_dir_path / f'{filename}_fs.mp3'
-        filepath = self.audio_dir_path / f'{filename}.mp3'
+        filepath_fs = audio_dir / f'{audio_basename}_fs.mp3'
+        filepath = audio_dir / f'{audio_basename}.mp3'
 
         tts = self.client.synthesize_speech(
             Text=text,

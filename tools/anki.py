@@ -6,15 +6,14 @@ import genanki
 
 class Anki:
 
-    def __init__(self, deckname: str, audio_dir: Path, deck: genanki.Deck, model: genanki.Model):
+    def __init__(self, deckname: str, deck: genanki.Deck, model: genanki.Model):
         self._deckname = deckname
-        self._audio_dir = audio_dir
         self._deck = deck
         self._model = model
-        self._audio_files = []
+        self._audio_files: list[Path] = []
 
     @staticmethod
-    def create_deck(deckname: str, audio_dir: Path, category: str | None = None):
+    def create_deck(deckname: str, category: str | None = None):
         if category:
             deck_loc = f'{category}::{deckname}'
         else:
@@ -50,10 +49,10 @@ class Anki:
                 }
                 """
         )
-        return Anki(deckname, audio_dir, my_deck, model)
+        return Anki(deckname, my_deck, model)
 
-    def add_note(self, front_text: str, back_text: str, audio_basename: str):
-        audio_filepath = self._audio_dir / f'{audio_basename}.mp3'
+    def add_note(self, front_text: str, back_text: str, audio_dir, audio_basename: str):
+        audio_filepath = audio_dir / f'{audio_basename}.mp3'
         my_note = genanki.Note(
             model=self._model,
             fields=[front_text, back_text, f'[sound:{audio_basename}]']
@@ -64,5 +63,8 @@ class Anki:
 
     def package_notes(self, output_path: Path):
         output_path.mkdir(exist_ok=True)
+        for file in self._audio_files:
+            if not Path(file).exists:
+                raise FileNotFoundError(f'Filepath missing [{file}]')
         genanki.Package(self._deck, media_files=self._audio_files).write_to_file(
             f'{output_path}/{self._deckname}.apkg')
