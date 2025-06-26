@@ -55,7 +55,7 @@ class Anki:
         audio_filepath = audio_dir / f'{audio_basename}.mp3'
         my_note = genanki.Note(
             model=self._model,
-            fields=[front_text, back_text, f'[sound:{audio_basename}]']
+            fields=[front_text, back_text, f'[sound:{audio_basename}.mp3]']
         )
 
         self._deck.add_note(my_note)
